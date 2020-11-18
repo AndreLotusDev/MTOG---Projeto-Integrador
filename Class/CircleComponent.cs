@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Threading.Tasks;
-using Unity;
+﻿using Unity;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Class
 {
@@ -46,17 +43,24 @@ namespace Assets.Scripts.Class
                 if (GameController.Instance.CurrentGamePosition.Count > 0)
                 {
                     int globalPosition = Position;
+
                     if (globalPosition == GameController.Instance.CurrentGamePosition[0])
                     {
                         GameController.Instance.CurrentGamePosition.RemoveAt(0);
                         GameController.Instance.playCorrectAsnwerSound();
+
+                        Circle circle = GameObject.FindGameObjectWithTag("Circle").GetComponent<Circle>();
+
+                        //Animação de clique
+                        circle.enableDisableCircleRender(globalPosition);
                     }
                     else
                     {
                         GameController.Instance.playIncorrectAsnwerSound();
-
+                        //Toca o audio de derrota
+                        GameController.Instance.setClipSoud(SoundHolders.Instance.audioList["Loose"]);
                         //Espera um tempo para setar a tela de loose
-                        await Utilities.awaitSomeTimeAsync(2);
+                        await Utilities.awaitSomeTimeAsync(0.25f);
                         GameController.Instance.setYouLooseScreen();
                         GameController.Instance.AllowedToClick = false;
                     }
@@ -65,8 +69,13 @@ namespace Assets.Scripts.Class
                     if (GameController.Instance.CurrentGamePosition.Count == 0)
                     {
                         //Seta a tela de win caso ele tenha eliminado todas as posições
-                        await Utilities.awaitSomeTimeAsync(2);
+                        await Utilities.awaitSomeTimeAsync(1);
+                        GameController.Instance.setClipSoud(SoundHolders.Instance.audioList["Win"]);
+                        await Utilities.awaitSomeTimeAsync(0.25f);
                         GameController.Instance.setYouWinScreen();
+
+                        //Seta a nova pontuação
+                        var Text = GameObject.FindGameObjectWithTag("Score").GetComponent<Text>().text = "Pontuação: " + GameController.Instance.getCurrentLevel;
                     }
                 }
             }

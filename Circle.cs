@@ -22,7 +22,7 @@ public class Circle : MonoBehaviour
         }
 
         //Codigo assincrono
-        StartCoroutine(WaitToSetActive(2.0f));
+        StartCoroutine(WaitToSetActive());
 
     }
 
@@ -32,10 +32,19 @@ public class Circle : MonoBehaviour
         //Implementar os cliques so apos de ter sorteado a rodada
 
         //Pega a peça atual que foi clicada
+
     }
 
-    private IEnumerator WaitToSetActive(float time)
+    async public void enableDisableCircleRender(int position)
     {
+        circleListRender[position].enabled = true;
+        await Utilities.awaitSomeTimeAsync(0.3);
+        circleListRender[position].enabled = false;
+    }
+
+    private IEnumerator WaitToSetActive()
+    {
+        float time = GameController.Instance.timeToFadeOutCircles;
         while (GameController.Instance.Rounds != 0)
         {
             //Reduz uma rodada do jogo
@@ -53,6 +62,9 @@ public class Circle : MonoBehaviour
                 if (actualPosition == selectedPiece)
                 {
                     circles.enabled = true;
+
+                    GameController.Instance.playBipSound();
+
                     //Espera mais um pouco
                     yield return new WaitForSeconds(time / 2);
                     circles.enabled = false;
@@ -60,8 +72,8 @@ public class Circle : MonoBehaviour
                     GameController.Instance.CurrentGamePosition.Add(actualPosition);
 
                     //Debugger
-                    if (GameController.Instance.Rounds == 0)
-                        GameController.Instance.CurrentGamePosition.ForEach(f => Debug.Log(f));
+                    //if (GameController.Instance.Rounds == 0)
+                    //    GameController.Instance.CurrentGamePosition.ForEach(f => Debug.Log(f));
                 }
             }
 

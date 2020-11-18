@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour
 
     //Numero de rounds
     public int Rounds {get; set;}
+    //Tempo para que cada circulo pisque
+    public float timeToFadeOutCircles { get; set; }
 
     #region Sounds
     //Som de resposta correta
@@ -27,6 +29,11 @@ public class GameController : MonoBehaviour
     //Som de resposta incorreta
     [SerializeField]
     private AudioSource incorrectAsnwerSound;
+
+    public GameObject SoundController { get; set; }
+
+    [SerializeField]
+    public AudioClip BipSound;
     #endregion
 
     #region WinLoose
@@ -35,6 +42,8 @@ public class GameController : MonoBehaviour
 
     public GameObject YouLoose { get; set; }
     #endregion
+
+    public int getCurrentLevel { get; set; }
 
     private void Awake()
     {
@@ -54,27 +63,36 @@ public class GameController : MonoBehaviour
 
         //Instanciação Win-Loose
         YouWin = GameObject.FindGameObjectWithTag("Win");
-        YouLoose= GameObject.FindGameObjectWithTag("Loose");
+        YouLoose = GameObject.FindGameObjectWithTag("Loose");
 
         YouWin.SetActive(false);
         YouLoose.SetActive(false);
+
+        //Instanciação da controller do jogo
+
+        SoundController = GameObject.FindGameObjectWithTag("SoundController");
 
         //Player Config
         AllowedToClick = false;
 
         //Rounds Inicias, depois alterar
-        Rounds = 3;
+        getCurrentLevel = 1;
+        Rounds = getCurrentLevel;
+
+        //Tempo inicial
+        timeToFadeOutCircles = 2.0f;
     }
 
     void Start()
     {
-
+        
     }
 
     void Update()
     {
-
     }
+
+
 
     //Verifica se o player acertou o circulo correto
     public void playCorrectAsnwerSound()
@@ -94,5 +112,24 @@ public class GameController : MonoBehaviour
     public void setYouLooseScreen()
     {
         YouLoose.SetActive(true);
+    }
+
+    public void playSound()
+    {
+        SoundController.GetComponent<AudioSource>().Play();
+    }
+
+    //Seta e toca a musica na controller
+    public void setClipSoud(AudioClip ac)
+    {
+        SoundController.GetComponent<AudioSource>().clip = ac;
+        SoundController.GetComponent<AudioSource>().Play();
+    }
+
+
+    public void playBipSound()
+    {
+        SoundController.GetComponent<AudioSource>().clip = BipSound;
+        SoundController.GetComponent<AudioSource>().Play();
     }
 }
